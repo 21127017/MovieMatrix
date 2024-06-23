@@ -79,7 +79,7 @@ func (app *application) authenticate(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) refreshToken(w http.ResponseWriter, r *http.Request) {
 	for _, cookie := range r.Cookies() {
-		if cookie.Name == app.auth.CookieDomain {
+		if cookie.Name == app.auth.CookieName {
 			claims := &Claims{}
 			refreshToken := cookie.Value
 
@@ -93,12 +93,12 @@ func (app *application) refreshToken(w http.ResponseWriter, r *http.Request) {
 
 			userID, err := strconv.Atoi(claims.Subject)
 			if err != nil {
-				app.errorJSON(w, errors.New("unknown user #1"), http.StatusUnauthorized)
+				app.errorJSON(w, errors.New("unknown user"), http.StatusUnauthorized)
 			}
 
 			user, err := app.DB.GetUserByID(userID)
 			if err != nil {
-				app.errorJSON(w, errors.New("unknown user #2"), http.StatusUnauthorized)
+				app.errorJSON(w, errors.New("unknown user"), http.StatusUnauthorized)
 			}
 
 			u := jwtUser{

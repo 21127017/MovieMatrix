@@ -11,7 +11,7 @@ import (
 type Auth struct {
 	Issuer        string
 	Audience      string
-	Secrect       string
+	Secret        string
 	TokenExpiry   time.Duration
 	RefreshExpiry time.Duration
 	CookieDomain  string
@@ -51,7 +51,7 @@ func (j *Auth) GenerateTokenPair(user *jwtUser) (TokenPairs, error) {
 	claims["exp"] = time.Now().UTC().Add(j.TokenExpiry).Unix()
 
 	//create a singed token
-	signedAccessToken, err := token.SignedString([]byte(j.Secrect))
+	signedAccessToken, err := token.SignedString([]byte(j.Secret))
 	if err != nil {
 		return TokenPairs{}, err
 	}
@@ -66,7 +66,7 @@ func (j *Auth) GenerateTokenPair(user *jwtUser) (TokenPairs, error) {
 	refreshTokenClaims["exp"] = time.Now().UTC().Add(j.RefreshExpiry).Unix()
 
 	//create singled refresh token
-	signedRefreshToken, err := refreshToken.SignedString([]byte(j.Secrect))
+	signedRefreshToken, err := refreshToken.SignedString([]byte(j.Secret))
 	if err != nil {
 		return TokenPairs{}, err
 	}
