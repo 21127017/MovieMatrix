@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useOutlet, useOutletContext } from "react-router-dom";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 
 const ManageCatalogue = () => {
     const [movies, setMovies] = useState([]);
@@ -20,7 +20,7 @@ const ManageCatalogue = () => {
             headers: headers,
         }
 
-        fetch(`/admin/movies`, requestOptions)
+        fetch(`${process.env.REACT_APP_BACKEND}/admin/movies`, requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 setMovies(data);
