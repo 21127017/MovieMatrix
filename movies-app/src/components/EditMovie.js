@@ -87,7 +87,43 @@ const EditMovie = () => {
                 })
         } else {
             //editing a movie
+            const headers = new Headers();
+            headers.append("Content-Type", "application/json");
+            headers.append("Authorization", "Bearer " + jwtToken);
 
+            const requestOptions = {
+                method: "GET",
+                headers: headers,
+            }
+
+            fetch(`/admin/movies/${id}`, requestOptions)
+                .then((response) => {
+                    if (response.status !== 200) {
+                        setError("Invalid response code: " + response.status)
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    data.movie.release_date = new Date(data.movie.release_date).toISOString().split("T")[0]
+
+                    const checks = [];
+
+                    data.genres.forEach(g => {
+                        if (data.movie.genres_array.indexOf(g.id) !== -1) {
+                            checks.push({id: g.id, checked: true, genre: g.genre});
+                        } else {
+                            checks.push({id: g.id, checked: false, genre: g.genre});
+                        }
+                    })
+
+                    setMovie({
+                        ...data.movie,
+                        genres: checks,
+                    })
+                })
+                .catch(err => {
+                    console.log(err);
+                })
         }
 
 
@@ -193,6 +229,10 @@ const EditMovie = () => {
             genres_array: tmpIDs,
         })
     }
+
+    if (error !== null) {
+        return <div>Error: {error.message}</div>;
+    } else {
     return (
         <div>
             <h2>Add/Edit Movie</h2>
@@ -239,6 +279,7 @@ const EditMovie = () => {
                     title={"MPAA Rating"}
                     name={"mpaa_rating"}
                     options={mpaaOptions}
+                    value={movie.mpaa_rating}
                     onChange={handleChange("mpaa_rating")}
                     placeHoder={"Choose..."}
                     errorMsg={"Please choose"}
@@ -284,6 +325,7 @@ const EditMovie = () => {
             </form>
         </div>
     )
+    }
 }
 
 export default EditMovie;
